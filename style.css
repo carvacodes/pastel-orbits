@@ -1,0 +1,122 @@
+body {
+  font-family: "PT Sans Narrow";
+  margin: 0;
+  overflow: hidden;
+  background-color: #000;
+}
+
+.desktop-controls {
+  display: none;
+}
+
+#ui {
+  padding: 0 3px;
+  color: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  opacity: 0.5;
+  animation: shine 0.5s ease-out 0s 4 alternate;
+  -webkit-animation: shine 0.5s ease-out 0s 4 alternate;
+  -moz-animation: shine 0.5s ease-out 0s 4 alternate;
+  -o-animation: shine 0.5s ease-out 0s 4 alternate;
+}
+
+.mobile-controls {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+}
+
+.mobile-controls p {
+  margin: 0 5px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.mobile-controls > * {
+  margin: 0 3px;
+  color: white;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.mobile-controls button {
+  font-family: "PT Sans Narrow";
+  color: black;
+  border-style: none;
+  border: thin solid white;
+  opacity: 0.5;
+  width: 100%;
+}
+
+.mobile-controls button.active {
+  opacity: 1;;
+  background-color: blueviolet;
+  border-color: blue;
+  color: white;
+}
+
+.mobile-controls button:first-of-type {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.mobile-controls button:last-of-type {
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+#hover {
+  font-size: 1.2em;
+  margin-top: 0;
+  padding: 0;
+  margin-bottom: -300px;
+  cursor: pointer;
+}
+
+#hover:hover {
+  margin-bottom: 0px;
+}
+
+ul {
+  margin: 0;
+  padding: 0.5em;
+  list-style: none;
+  background-color: #222;
+}
+
+.setting-information {
+  position: fixed;
+  bottom: 3px;
+  left: 3px;
+  color: white;
+  opacity: 0;
+  animation-name: fade;
+  animation-duration: 3.667s;
+}
+
+.setting-information p {
+  margin: 0 auto;
+}
+
+@keyframes shine { from { opacity: 0.5; } to { opacity: 1; } }
+@keyframes fade { 0% { opacity: 0.5; } 75% { opacity: 0.5; } 100% { opacity: 0; } }
+
+@media screen and (min-width: 850px) and (min-height: 700px) {
+  .desktop-controls {
+    display: block;
+  }
+}

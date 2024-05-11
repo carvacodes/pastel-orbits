@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="./style.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link href='https://fonts.googleapis.com/css?family=PT+Sans+Narrow' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+        <div id="ui">
+            <section class="desktop-controls">
+                <p id="hover">Hover/Tap for controls</p>
+                <ul id="controls">
+                <li><p>In case you want to use a keyboard to control the animation:<p/></li>
+                <li>Spacebar: reset</li>
+                <li>X-Y: start/stop auto X and Y scaling animation</li>
+                <li>U-D Arrows: change the orbit size</li>
+                <li>L-R Arrows: change the number of dots</li>
+                <li>W-S: increase/decrease orbit speed</li>
+                <li>E-D: adjust the X-axis scale</li>
+                <li>R-F: adjust the Y-axis scale</li>
+                <li>Q-A: adjust dot size</li>
+                </ul>
+            </section>
+        </div>
+        <div class="mobile-controls">
+        <div class="button-group">
+            <p>Animation Control</p>
+            <button id="reset">Reset</button>
+        </div>
+        <div class="button-group">
+            <p>Orbit Size</p>
+            <button id="orbitSizeUp">+</button>
+            <button id="orbitSizeDown">-</button>
+        </div>
+        <div class="button-group">
+            <p>Orbit Speed</p>
+            <button id="orbitSpeedUp">+</button>
+            <button id="orbitSpeedDown">-</button>
+        </div>
+        <div class="button-group">
+            <p># Dots</p>
+            <button id="dotNumberUp">+</button>
+            <button id="dotNumberDown">-</button>
+        </div>
+        <div class="button-group">
+            <p>Dots Size</p>
+            <button id="dotSizeUp">+</button>
+            <button id="dotSizeDown">-</button>
+        </div>
+        <div class="button-group">
+            <p>X-Axis Size</p>
+            <button id="xAxisScaleUp">+</button>
+            <button id="xAxisScaleDown">-</button>
+        </div>
+        <div class="button-group">
+            <p>Y-Axis Size</p>
+            <button id="yAxisScaleUp">+</button>
+            <button id="yAxisScaleDown">-</button>
+        </div>
+        </div>
+        <div class="setting-information" id="settingInfo">
+            <p><span id="settingName">Status</span> : <span id="settingValue">Initializing</span></p>
+        </div>
+          <canvas id="canvas"></canvas>
+        <script src="./script.js"></script>
+    </body>
+</html>
