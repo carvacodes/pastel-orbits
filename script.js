@@ -14,9 +14,6 @@ function reset() {
   orbit = Math.min(innerWidth, innerHeight) / 2;
   dotRadius = Math.round(orbit/ 150);
   loaded = 0;
-  autoOrbitRun = 0;
-  autoXScaleRun = 0;
-  autoYScaleRun = 0;
   orbitMod = 1;
   xScaleMod = 1;
   yScaleMod = 1;
@@ -55,7 +52,7 @@ function setInfoData(valName, valData) {
   // resetting CSS animations is pretty difficult, but this is a quick and dirty (and also sure-fire) way to do it
   let tempSetting = settingInfo;
   settingInfo.remove();
-  document.body.appendChild(settingInfo);
+  document.body.appendChild(tempSetting);
   settingInfoName.textContent = valName;
   settingInfoValue.textContent = valData;
 }
@@ -175,22 +172,6 @@ window.onkeydown = function(event) {
     case 'A':
       changeDotSize(-0.5);
       break;
-    case 'x':
-    case 'X':      
-      if (autoXScaleRun === 0) {
-        autoXScaleRun = 1;
-      } else {
-        autoXScaleRun = 0;
-      }
-      break;
-    case 'y':
-    case 'Y': 
-      if (autoYScaleRun === 0) {
-        autoYScaleRun = 1;
-      } else {
-        autoYScaleRun = 0;
-      }
-      break;
   }
 };
 
@@ -302,29 +283,11 @@ function init() {
   }
 }
 
-function updateRotation() {
-  if (rotation + speed >= 2) {
+function updateRotation(frameSpeedFactor) {
+  if (rotation + (speed * frameSpeedFactor) >= 2) {
     rotation = 0;
   } else {
-    rotation += speed;
-  }
-}
-
-function autoXScale() {
-  let scaleMod = xScaleMod * 0.006;
-  if (xScale + scaleMod >= 1 || xScale + scaleMod <= -1) {
-    xScaleMod *= -1;
-  } else {
-    xScale += scaleMod;
-  }
-}
-
-function autoYScale() {
-  let scaleMod = yScaleMod * 0.006;
-  if (yScale + scaleMod >= 1 || yScale + scaleMod <= -1) {
-    yScaleMod *= -1;
-  } else {
-    yScale += scaleMod;
+    rotation += speed * frameSpeedFactor;
   }
 }
 
@@ -374,37 +337,27 @@ orbitGrad.addColorStop(0.8, 'hsl(360, 100%, 80%)');
 orbitGrad.addColorStop(0.9, 'hsl(180, 100%, 80%)');
 orbitGrad.addColorStop(1, 'hsl(0, 100%, 80%)');
 
-// lock to 60fps
+// variables to track the time elapsed between each frame
+let firstFrameTime = performance.now();
+let frameSpeedFactor = 1;
+let tempFrameSpeedFactor = 0;
 
-let currentTime = Date.now();
-
-function draw() {
-  let frameTime = Date.now();
-  if (frameTime - currentTime < 16) {
-    window.requestAnimationFrame(draw);
-    return;
-  }
-
-  currentTime = frameTime;
+function draw(callbackTime) {
+  // target 30fps by dividing the monitor's refresh rate by 30 to calculate per-frame movement
+  tempFrameSpeedFactor = Math.min(callbackTime - firstFrameTime, 30);   // set a minimum to avoid frame timer buildup when the window is not focused
+  firstFrameTime = callbackTime;
+  frameSpeedFactor = tempFrameSpeedFactor / 30;
   
   init();
-  ctx.fillStyle = 'hsla(0, 0%, 0%, 0.2)';
+  ctx.fillStyle = `hsla(0, 0%, 0%, ${0.2 * frameSpeedFactor})`;
   ctx.fillRect(0, 0, innerWidth, innerHeight);
   ctx.fillStyle = orbitGrad;
   for (let i = 0; i < dotNum; i++) {
     drawDot(i);
   }
-  updateRotation();
-  if (autoOrbitRun) {
-    autoOrbit();
-  }
-  if (autoXScaleRun) {
-    autoXScale();
-  }
-  if (autoYScaleRun) {
-    autoYScale();
-  }
+  updateRotation(frameSpeedFactor);
+
   window.requestAnimationFrame(draw);
 }
 
-draw();
+window.requestAnimationFrame(draw);
