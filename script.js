@@ -1,8 +1,11 @@
-// set most globals here
+// global variable declarations
 let rotation, speed, dotNum, xScale, yScale, orbit, dotRadius, loaded, autoOrbitRun, autoXScaleRun, autoYScaleRun, orbitMod, xScaleMod, yScaleMod, held, funcCallDelay;
 
-let centerX = innerWidth / 2;
-let centerY = innerHeight / 2;
+let _w = window.innerWidth * window.devicePixelRatio;
+let _h = window.innerHeight * window.devicePixelRatio;
+
+let centerX = _w / 2;
+let centerY = _h / 2;
 
 // this function resets the entire animation back to defaults every time its run
 function reset() {
@@ -11,7 +14,7 @@ function reset() {
   dotNum = 0;
   xScale = 0.8;
   yScale = 0.333;
-  orbit = Math.min(innerWidth, innerHeight) / 2;
+  orbit = Math.min(_w, _h) / 2;
   dotRadius = Math.round(orbit/ 150);
   loaded = 0;
   orbitMod = 1;
@@ -28,15 +31,12 @@ reset();
 let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 
-canvas.width = innerWidth;
-canvas.height = innerHeight;
+canvas.width = _w;
+canvas.height = _h;
 
 // keeps the animation centered within the window
 window.addEventListener('resize', function() {
-  canvas.width = innerWidth;
-  canvas.height = innerHeight;
-  centerX = innerWidth / 2;
-  centerY = innerHeight / 2;
+  window.location.reload();
 });
 
 // set up the easy button listeners
@@ -207,8 +207,8 @@ function runFunctionContinuously(func, arg) {
 function changeOrbitSize(change) {
   if (orbit + change < 5) {
     orbit  = 5;
-  } else if (orbit + change > Math.max(innerWidth, innerHeight)) {
-    orbit = Math.max(innerWidth, innerHeight);
+  } else if (orbit + change > Math.max(_w, _h)) {
+    orbit = Math.max(_w, _h);
   } else {
     orbit += change;
   }
@@ -324,7 +324,7 @@ function drawDot(n) {
 }
 
 // this gradient becomes the fill for every dot, but it only needs defining once, outside the main animation function
-let orbitGrad = ctx.createLinearGradient(0, 0, innerWidth, innerHeight);
+let orbitGrad = ctx.createLinearGradient(0, 0, _w, _h);
 orbitGrad.addColorStop(0, 'hsl(0, 100%, 80%)');
 orbitGrad.addColorStop(0.1, 'hsl(90, 100%, 80%)');
 orbitGrad.addColorStop(0.2, 'hsl(180, 100%, 80%)');
@@ -349,8 +349,8 @@ function draw(callbackTime) {
   frameSpeedFactor = tempFrameSpeedFactor / 30;
   
   init();
-  ctx.fillStyle = `hsla(0, 0%, 0%, ${0.2 * frameSpeedFactor})`;
-  ctx.fillRect(0, 0, innerWidth, innerHeight);
+  ctx.fillStyle = `hsla(0, 0%, 0%, ${(1 - frameSpeedFactor) * frameSpeedFactor})`;
+  ctx.fillRect(0, 0, _w, _h);
   ctx.fillStyle = orbitGrad;
   for (let i = 0; i < dotNum; i++) {
     drawDot(i);
