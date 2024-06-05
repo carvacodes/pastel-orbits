@@ -1,5 +1,7 @@
 // global variable declarations
-let rotation, speed, dotNum, xScale, yScale, orbit, dotRadius, loaded, autoOrbitRun, autoXScaleRun, autoYScaleRun, orbitMod, xScaleMod, yScaleMod, held, funcCallDelay;
+let rotation, speed, dotNum, xScale, yScale, orbit, dotRadius,
+    loaded, held, funcCallDelay, buttonInteractDelay, firstButtonInteractHandled,
+    orbitMod, xScaleMod, yScaleMod;
 
 let _w = window.innerWidth * window.devicePixelRatio;
 let _h = window.innerHeight * window.devicePixelRatio;
@@ -21,7 +23,9 @@ function reset() {
   xScaleMod = 1;
   yScaleMod = 1;
   held = false;
-  funcCallDelay = Date.now();
+  buttonInteractDelay = performance.now();
+  firstButtonInteractHandled = false;
+  funcCallDelay = performance.now();
 }
 
 // and since we're on the topic, run it now
@@ -66,9 +70,11 @@ window.addEventListener('touchend', handleHoldStop, {passive: false});
 // the big hold start function
 function handleHoldStart(e) {
   e.preventDefault();
-  // set held to true when this is called, and set the function call delay to right now
+  // set held to true when this is called, set the function call delay to right now, and force interactions to wait until the buttonInteractDelay has passed
   held = true;
-  funcCallDelay = Date.now();
+  funcCallDelay = performance.now();
+  buttonInteractDelay = funcCallDelay + 330;
+  firstButtonInteractHandled = true;
 
   // if a button is the target, add the active class
   if (e.target.tagName = 'BUTTON') {
@@ -178,20 +184,34 @@ window.onkeydown = function(event) {
 // on release of touch or mouse, remove the active button's class, reset function call delay, and set held to false to prep for another hold
 function handleHoldStop(e) {
   document.getElementsByClassName('active')[0].classList.remove('active');
-  funcCallDelay = Date.now();
+  funcCallDelay = performance.now();
   held = false;
 }
 
 // this function utilizes requestAnimationFrame to handle much of its timing, but also caps the max calls per second to 60
 function runFunctionContinuously(func, arg) {
+  // prevent additional recursive calls if the user is no longer holding anything
   if (!held) { return; }
-  let now = Date.now();
-  if (now - funcCallDelay < 16 && held) {
+
+  // allow one method call through on the first button interact, but delay by half a second from there
+  if (performance.now() < buttonInteractDelay && firstButtonInteractHandled) {
+    firstButtonInteractHandled = false;
+    func(arg);
+    window.requestAnimationFrame(()=>{
+      runFunctionContinuously(func, arg);
+    });
+    return;
+  }
+
+  // keep recursing if the user is still holding, but don't call any other methods
+  let now = performance.now();
+  if (now - funcCallDelay <= 16 || performance.now() < buttonInteractDelay) {
     window.requestAnimationFrame(()=>{
       runFunctionContinuously(func, arg);
       return;
     });
   } else {
+    // if the user is still holding after a half second delay, continuously recurse and call desired method
     funcCallDelay = now;
     func(arg);
     window.requestAnimationFrame(()=>{
